@@ -1,0 +1,143 @@
+spring:
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  # H2 Console (for development only)
+  h2:
+    console:
+      enabled: false
+
+  # Mail Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your-email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # Security Configuration (in-memory user removed; using JWT only)
+
+# JWT Configuration
+jwt:
+  secret: bXlTZWNyZXRLZXkxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MA==
+  access-token-expiration: 900000    # 15 minutes
+  refresh-token-expiration: 604800000 # 7 days
+
+# Application Configuration
+app:
+  name: Meeting Booking System
+  version: 1.0.0
+  frontend:
+    url: http://localhost:3000
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Logging Configuration
+logging:
+  level:
+    com.meetingbooking: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+
+# Management endpoints (for health checks)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+---
+# Development Profile (with H2 Console)
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # Development Database Configuration (H2 with console)
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  # H2 Console enabled for development
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  # JPA Configuration for Development
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  # Production Database Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/meeting_booking_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:meeting_user}
+    password: ${DB_PASSWORD:meeting_password}
+
+  # JPA Configuration for Production
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  # Mail Configuration for Production
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
